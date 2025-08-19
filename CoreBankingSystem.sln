@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36408.4 d17.14
+VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBankingSystem.Application.Tests", "CoreBankingSystem.Application.Tests\CoreBankingSystem.Application.Tests.csproj", "{F5A36F31-AAC1-4011-864F-C9CC1220D0D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBankingSystem.Persistence.Tests", "CoreBankingSystem.Persistence.Tests\CoreBankingSystem.Persistence.Tests.csproj", "{EBF25408-FD74-4072-80A6-A4BCBA4F38C7}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "CoreBankingSystem.AngularUI", "CoreBankingSystem.AngularUI\CoreBankingSystem.AngularUI.esproj", "{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,12 @@ Global
 		{EBF25408-FD74-4072-80A6-A4BCBA4F38C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBF25408-FD74-4072-80A6-A4BCBA4F38C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBF25408-FD74-4072-80A6-A4BCBA4F38C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +80,7 @@ Global
 		{AE828B7E-2217-40AA-9E12-B5E25A163259} = {4EA65C55-A334-424C-A964-B6D4B01E6328}
 		{F5A36F31-AAC1-4011-864F-C9CC1220D0D4} = {14F1CF7A-01F2-4F88-8F1A-0E0D0F782143}
 		{EBF25408-FD74-4072-80A6-A4BCBA4F38C7} = {14F1CF7A-01F2-4F88-8F1A-0E0D0F782143}
+		{C4DD4D4C-8CCC-71F7-71A4-7E330C8FCD0D} = {1590FF40-77D8-4CA3-BBCA-236043CA678A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {05684176-DC37-429D-A425-66DA0787F679}
