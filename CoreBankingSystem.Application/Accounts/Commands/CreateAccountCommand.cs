@@ -1,0 +1,34 @@
+using AutoMapper;
+using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Accounts.Models;
+using CoreBankingSystem.Domain.Entities;
+using MediatR;
+
+namespace CoreBankingSystem.Application.Accounts.Commands;
+
+public record CreateAccountCommand(
+    string AccountNumber,
+    string AccountType,
+    decimal InitialBalance,
+    bool Status
+) : IRequest<AccountDto>;
+
+public class CreateAccountCommandHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<CreateAccountCommand, AccountDto>
+{
+    public async Task<AccountDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    {
+        var entity = new Account
+        {
+            AccountNumber = request.AccountNumber,
+            AccountType = request.AccountType,
+            InitialBalance = request.InitialBalance,
+            Status = request.Status
+        };
+
+        context.Accounts.Add(entity);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return mapper.Map<AccountDto>(entity);
+    }
+}

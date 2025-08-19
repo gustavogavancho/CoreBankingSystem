@@ -1,0 +1,35 @@
+using AutoMapper;
+using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Transactions.Models;
+using CoreBankingSystem.Domain.Entities;
+using MediatR;
+
+namespace CoreBankingSystem.Application.Transactions.Commands;
+
+public record CreateTransactionCommand(
+    DateTime Date,
+    string TransactionType,
+    decimal Amount,
+    decimal Balance
+) : IRequest<TransactionDto>;
+
+public class CreateTransactionCommandHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<CreateTransactionCommand, TransactionDto>
+{
+    public async Task<TransactionDto> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
+    {
+        var entity = new Transaction
+        {
+            TransactionId = Guid.NewGuid(),
+            Date = request.Date,
+            TransactionType = request.TransactionType,
+            Amount = request.Amount,
+            Balance = request.Balance
+        };
+
+        context.Transactions.Add(entity);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return mapper.Map<TransactionDto>(entity);
+    }
+}
