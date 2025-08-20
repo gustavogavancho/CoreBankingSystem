@@ -24,7 +24,7 @@ public class AccountsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<AccountDto>> GetByNumber(string accountNumber)
     {
         var result = await mediator.Send(new GetAccountByNumberQuery(accountNumber));
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpPost]
@@ -39,14 +39,14 @@ public class AccountsController(IMediator mediator) : ControllerBase
     {
         if (!string.Equals(accountNumber, command.AccountNumber, StringComparison.OrdinalIgnoreCase)) return BadRequest();
         var result = await mediator.Send(command);
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpDelete("{accountNumber}")]
     public async Task<ActionResult> Delete(string accountNumber)
     {
-        var success = await mediator.Send(new DeleteAccountCommand(accountNumber));
-        return success ? NoContent() : NotFound();
+        await mediator.Send(new DeleteAccountCommand(accountNumber));
+        return NoContent();
     }
 
     // Nested Transactions endpoints following REST pattern: /api/accounts/{accountNumber}/transactions
@@ -62,7 +62,6 @@ public class AccountsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<TransactionDto>> GetAccountTransactionById(string accountNumber, Guid transactionId)
     {
         var tx = await mediator.Send(new GetTransactionByIdQuery(transactionId));
-        if (tx is null) return NotFound();
         // Optional guard: ensure the transaction belongs to the requested account
         if (!string.Equals(tx.AccountNumber, accountNumber, StringComparison.OrdinalIgnoreCase)) return NotFound();
         return Ok(tx);
@@ -89,14 +88,14 @@ public class AccountsController(IMediator mediator) : ControllerBase
             command = command with { AccountNumber = accountNumber };
         }
         var result = await mediator.Send(command);
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpDelete("{accountNumber}/transactions/{transactionId:guid}")]
     public async Task<ActionResult> DeleteAccountTransaction(string accountNumber, Guid transactionId)
     {
         // Optionally we could verify account matches before deleting; skipping for simplicity
-        var success = await mediator.Send(new DeleteTransactionCommand(transactionId));
-        return success ? NoContent() : NotFound();
+        await mediator.Send(new DeleteTransactionCommand(transactionId));
+        return NoContent();
     }
 }

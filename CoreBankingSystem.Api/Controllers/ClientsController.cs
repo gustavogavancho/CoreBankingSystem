@@ -23,7 +23,7 @@ public class ClientsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ClientDto>> GetById(Guid id)
     {
         var result = await mediator.Send(new GetClientByIdQuery(id));
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpGet("{clientId:guid}/accounts")]
@@ -45,13 +45,13 @@ public class ClientsController(IMediator mediator) : ControllerBase
     {
         if (id != command.Id) return BadRequest();
         var result = await mediator.Send(command);
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
-        var success = await mediator.Send(new DeleteClientCommand(id));
-        return success ? NoContent() : NotFound();
+        await mediator.Send(new DeleteClientCommand(id));
+        return NoContent();
     }
 }

@@ -1,5 +1,6 @@
 using AutoMapper;
 using CoreBankingSystem.Application.Abstractions.Repositories;
+using CoreBankingSystem.Application.Common.Exceptions;
 using CoreBankingSystem.Application.Transactions.Models;
 using MediatR;
 
@@ -20,7 +21,7 @@ public class UpdateTransactionCommandHandler(ITransactionRepository repository, 
     public async Task<TransactionDto?> Handle(UpdateTransactionCommand request, CancellationToken cancellationToken)
     {
         var entity = await repository.GetByIdAsync(request.TransactionId, cancellationToken);
-        if (entity is null) return null;
+        if (entity is null) throw new NotFoundException("Transaction", request.TransactionId);
 
         entity.AccountNumber = request.AccountNumber;
         entity.Date = request.Date;

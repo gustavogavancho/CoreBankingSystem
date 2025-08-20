@@ -1,18 +1,20 @@
 using AutoMapper;
 using CoreBankingSystem.Application.Abstractions.Repositories;
+using CoreBankingSystem.Application.Common.Exceptions;
 using CoreBankingSystem.Application.Transactions.Models;
 using MediatR;
 
 namespace CoreBankingSystem.Application.Transactions.Queries;
 
-public record GetTransactionByIdQuery(Guid TransactionId) : IRequest<TransactionDto?>;
+public record GetTransactionByIdQuery(Guid TransactionId) : IRequest<TransactionDto>;
 
 public class GetTransactionByIdQueryHandler(ITransactionRepository repository, IMapper mapper)
-    : IRequestHandler<GetTransactionByIdQuery, TransactionDto?>
+    : IRequestHandler<GetTransactionByIdQuery, TransactionDto>
 {
-    public async Task<TransactionDto?> Handle(GetTransactionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<TransactionDto> Handle(GetTransactionByIdQuery request, CancellationToken cancellationToken)
     {
         var transaction = await repository.GetByIdAsync(request.TransactionId, cancellationToken);
-        return transaction is null ? null : mapper.Map<TransactionDto>(transaction);
+        if (transaction is null) throw new NotFoundException(nameof(TransactionDto), request.TransactionId);
+        return mapper.Map<TransactionDto>(transaction);
     }
 }

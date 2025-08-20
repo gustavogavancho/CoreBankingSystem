@@ -21,7 +21,7 @@ public class TransactionsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<TransactionDto>> GetById(Guid id)
     {
         var result = await mediator.Send(new GetTransactionByIdQuery(id));
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     // Keep a top-level filter as helper if needed, but nested route under accounts is the canonical one.
@@ -45,13 +45,13 @@ public class TransactionsController(IMediator mediator) : ControllerBase
     {
         if (id != command.TransactionId) return BadRequest();
         var result = await mediator.Send(command);
-        return result is null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
-        var success = await mediator.Send(new DeleteTransactionCommand(id));
-        return success ? NoContent() : NotFound();
+        await mediator.Send(new DeleteTransactionCommand(id));
+        return NoContent();
     }
 }

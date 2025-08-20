@@ -18,7 +18,7 @@ builder.Services.AddPersistence(builder.Configuration);
 
 var app = builder.Build();
 
-// Ensure database is created/migrated
+// Ensure database is created/migrated + seeded
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -31,6 +31,8 @@ using (var scope = app.Services.CreateScope())
     {
         await db.Database.EnsureCreatedAsync();
     }
+
+    await ApplicationDbContextSeeder.SeedAsync(db);
 }
 
 // Global exception handling

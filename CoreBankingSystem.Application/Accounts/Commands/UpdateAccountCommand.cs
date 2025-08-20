@@ -1,6 +1,7 @@
 using AutoMapper;
 using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Accounts.Models;
+using CoreBankingSystem.Application.Common.Exceptions;
 using MediatR;
 
 namespace CoreBankingSystem.Application.Accounts.Commands;
@@ -18,7 +19,7 @@ public class UpdateAccountCommandHandler(IAccountRepository repository, IMapper 
     public async Task<AccountDto?> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
     {
         var entity = await repository.GetByNumberAsync(request.AccountNumber, cancellationToken);
-        if (entity is null) return null;
+        if (entity is null) throw new NotFoundException("Account", request.AccountNumber);
 
         entity.AccountType = request.AccountType;
         entity.InitialBalance = request.InitialBalance;
