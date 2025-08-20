@@ -18,17 +18,23 @@ builder.Services.AddPersistence(builder.Configuration);
 
 var app = builder.Build();
 
-// Ensure database is created/migrated + seeded
+// Ensure database is created/migrated and seeded
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var pending = await db.Database.GetPendingMigrationsAsync();
-    if (pending.Any())
+
+    var hasMigrations = db.Database.GetMigrations().Any();
+    if (hasMigrations)
     {
         await db.Database.MigrateAsync();
     }
     else
     {
+        // In dev, drop and recreate to match current model when no migrations exist
+        if (app.Environment.IsDevelopment())
+        {
+            await db.Database.EnsureDeletedAsync();
+        }
         await db.Database.EnsureCreatedAsync();
     }
 
