@@ -24,6 +24,15 @@ public class TransactionsController(IMediator mediator) : ControllerBase
         return result is null ? NotFound() : Ok(result);
     }
 
+    // Keep a top-level filter as helper if needed, but nested route under accounts is the canonical one.
+    [HttpGet]
+    [Route("/api/accounts/{accountNumber}/transactions")] // explicit route to reuse the same controller action if desired
+    public async Task<ActionResult<List<TransactionDto>>> GetByAccount(string accountNumber)
+    {
+        var result = await mediator.Send(new GetTransactionsByAccountNumberQuery(accountNumber));
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<TransactionDto>> Create(CreateTransactionCommand command)
     {

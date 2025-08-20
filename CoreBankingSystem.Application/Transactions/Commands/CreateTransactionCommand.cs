@@ -7,6 +7,7 @@ using MediatR;
 namespace CoreBankingSystem.Application.Transactions.Commands;
 
 public record CreateTransactionCommand(
+    string AccountNumber,
     DateTime Date,
     string TransactionType,
     decimal Amount,
@@ -21,6 +22,7 @@ public class CreateTransactionCommandHandler(IApplicationDbContext context, IMap
         var entity = new Transaction
         {
             TransactionId = Guid.NewGuid(),
+            AccountNumber = request.AccountNumber,
             Date = request.Date,
             TransactionType = request.TransactionType,
             Amount = request.Amount,

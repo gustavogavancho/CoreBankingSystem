@@ -1,3 +1,5 @@
+using CoreBankingSystem.Application.Accounts.Models;
+using CoreBankingSystem.Application.Accounts.Queries;
 using CoreBankingSystem.Application.Clients.Commands;
 using CoreBankingSystem.Application.Clients.Models;
 using CoreBankingSystem.Application.Clients.Queries;
@@ -24,11 +26,11 @@ public class ClientsController(IMediator mediator) : ControllerBase
         return result is null ? NotFound() : Ok(result);
     }
 
-    [HttpGet("by-client-id/{clientId:guid}")]
-    public async Task<ActionResult<ClientDto>> GetByClientId(Guid clientId)
+    [HttpGet("{clientId:guid}/accounts")]
+    public async Task<ActionResult<List<AccountDto>>> GetClientAccounts(Guid clientId)
     {
-        var result = await mediator.Send(new GetClientByClientIdQuery(clientId));
-        return result is null ? NotFound() : Ok(result);
+        var result = await mediator.Send(new GetAccountsByClientQuery(clientId));
+        return Ok(result);
     }
 
     [HttpPost]

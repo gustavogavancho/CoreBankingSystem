@@ -8,6 +8,9 @@ public class TransactionMappingProfile : Profile
 {
     public TransactionMappingProfile()
     {
-        CreateMap<Transaction, TransactionDto>().ReverseMap();
+        CreateMap<Transaction, TransactionDto>()
+            .ForMember(dest => dest.AccountNumber, opt => opt.MapFrom(src => src.AccountNumber))
+            .ReverseMap()
+            .ForMember(dest => dest.AccountNumber, opt => opt.MapFrom(src => src.AccountNumber));
     }
 }

@@ -9,4 +9,8 @@ public class Transaction
     public string TransactionType { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public decimal Balance { get; set; }
+
+    // FK to Account
+    public string AccountNumber { get; set; } = string.Empty;
+    public Account? Account { get; set; }
 }

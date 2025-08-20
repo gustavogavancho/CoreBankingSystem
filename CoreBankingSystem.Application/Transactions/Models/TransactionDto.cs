@@ -7,4 +7,5 @@ public class TransactionDto
     public string TransactionType { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public decimal Balance { get; set; }
+    public string AccountNumber { get; set; } = string.Empty;
 }

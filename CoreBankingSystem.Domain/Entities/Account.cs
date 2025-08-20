@@ -8,4 +8,7 @@ public class Account
     public string AccountType { get; set; } = string.Empty;
     public decimal InitialBalance { get; set; }
     public bool Status { get; set; }
+
+    // Navigation
+    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

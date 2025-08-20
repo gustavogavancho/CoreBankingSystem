@@ -38,6 +38,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.AccountNumber).HasMaxLength(30);
             entity.Property(e => e.AccountType).HasMaxLength(50).IsRequired();
             entity.Property(e => e.InitialBalance).HasColumnType("decimal(18,2)");
+
+            entity.HasMany(a => a.Transactions)
+                  .WithOne(t => t.Account!)
+                  .HasForeignKey(t => t.AccountNumber)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Transaction>(entity =>

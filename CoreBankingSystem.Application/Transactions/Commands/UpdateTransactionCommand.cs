@@ -8,6 +8,7 @@ namespace CoreBankingSystem.Application.Transactions.Commands;
 
 public record UpdateTransactionCommand(
     Guid TransactionId,
+    string AccountNumber,
     DateTime Date,
     string TransactionType,
     decimal Amount,
@@ -22,6 +23,7 @@ public class UpdateTransactionCommandHandler(IApplicationDbContext context, IMap
         var entity = await context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == request.TransactionId, cancellationToken);
         if (entity is null) return null;
 
+        entity.AccountNumber = request.AccountNumber;
         entity.Date = request.Date;
         entity.TransactionType = request.TransactionType;
         entity.Amount = request.Amount;
