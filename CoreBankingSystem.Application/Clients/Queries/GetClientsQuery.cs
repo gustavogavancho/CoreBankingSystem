@@ -1,19 +1,18 @@
 using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Clients.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CoreBankingSystem.Application.Clients.Queries;
 
 public record GetClientsQuery : IRequest<List<ClientDto>>;
 
-public class GetClientsQueryHandler(IApplicationDbContext context, IMapper mapper)
+public class GetClientsQueryHandler(IClientRepository repository, IMapper mapper)
     : IRequestHandler<GetClientsQuery, List<ClientDto>>
 {
     public async Task<List<ClientDto>> Handle(GetClientsQuery request, CancellationToken cancellationToken)
     {
-        var clients = await context.Clients.AsNoTracking().ToListAsync(cancellationToken);
+        var clients = await repository.GetAllAsync(cancellationToken);
         return mapper.Map<List<ClientDto>>(clients);
     }
 }

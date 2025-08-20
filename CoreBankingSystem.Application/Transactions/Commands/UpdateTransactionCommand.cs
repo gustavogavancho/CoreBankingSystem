@@ -1,8 +1,7 @@
 using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Transactions.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CoreBankingSystem.Application.Transactions.Commands;
 
@@ -15,12 +14,12 @@ public record UpdateTransactionCommand(
     decimal Balance
 ) : IRequest<TransactionDto?>;
 
-public class UpdateTransactionCommandHandler(IApplicationDbContext context, IMapper mapper)
+public class UpdateTransactionCommandHandler(ITransactionRepository repository, IMapper mapper)
     : IRequestHandler<UpdateTransactionCommand, TransactionDto?>
 {
     public async Task<TransactionDto?> Handle(UpdateTransactionCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == request.TransactionId, cancellationToken);
+        var entity = await repository.GetByIdAsync(request.TransactionId, cancellationToken);
         if (entity is null) return null;
 
         entity.AccountNumber = request.AccountNumber;
@@ -29,7 +28,7 @@ public class UpdateTransactionCommandHandler(IApplicationDbContext context, IMap
         entity.Amount = request.Amount;
         entity.Balance = request.Balance;
 
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.UpdateAsync(entity, cancellationToken);
 
         return mapper.Map<TransactionDto>(entity);
     }

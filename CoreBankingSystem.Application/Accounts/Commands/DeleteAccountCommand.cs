@@ -1,21 +1,19 @@
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CoreBankingSystem.Application.Accounts.Commands;
 
 public record DeleteAccountCommand(string AccountNumber) : IRequest<bool>;
 
-public class DeleteAccountCommandHandler(IApplicationDbContext context)
+public class DeleteAccountCommandHandler(IAccountRepository repository)
     : IRequestHandler<DeleteAccountCommand, bool>
 {
     public async Task<bool> Handle(DeleteAccountCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Accounts.FirstOrDefaultAsync(a => a.AccountNumber == request.AccountNumber, cancellationToken);
+        var entity = await repository.GetByNumberAsync(request.AccountNumber, cancellationToken);
         if (entity is null) return false;
 
-        context.Accounts.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.RemoveAsync(entity, cancellationToken);
 
         return true;
     }

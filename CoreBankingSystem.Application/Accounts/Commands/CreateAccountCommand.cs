@@ -1,5 +1,5 @@
 using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Accounts.Models;
 using CoreBankingSystem.Domain.Entities;
 using MediatR;
@@ -13,7 +13,7 @@ public record CreateAccountCommand(
     bool Status
 ) : IRequest<AccountDto>;
 
-public class CreateAccountCommandHandler(IApplicationDbContext context, IMapper mapper)
+public class CreateAccountCommandHandler(IAccountRepository repository, IMapper mapper)
     : IRequestHandler<CreateAccountCommand, AccountDto>
 {
     public async Task<AccountDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
@@ -26,8 +26,7 @@ public class CreateAccountCommandHandler(IApplicationDbContext context, IMapper 
             Status = request.Status
         };
 
-        context.Accounts.Add(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.AddAsync(entity, cancellationToken);
 
         return mapper.Map<AccountDto>(entity);
     }

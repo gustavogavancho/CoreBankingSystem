@@ -1,4 +1,5 @@
 using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,11 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
+        // Repositories registrations
+        services.AddScoped<IClientRepository, Repositories.ClientRepository>();
+        services.AddScoped<IAccountRepository, Repositories.AccountRepository>();
+        services.AddScoped<ITransactionRepository, Repositories.TransactionRepository>();
 
         return services;
     }

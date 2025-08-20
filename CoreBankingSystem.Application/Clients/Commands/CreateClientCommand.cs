@@ -1,5 +1,5 @@
 using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Clients.Models;
 using CoreBankingSystem.Domain.Entities;
 using MediatR;
@@ -16,7 +16,7 @@ public record CreateClientCommand(
     bool Status
 ) : IRequest<ClientDto>;
 
-public class CreateClientCommandHandler(IApplicationDbContext context, IMapper mapper)
+public class CreateClientCommandHandler(IClientRepository repository, IMapper mapper)
     : IRequestHandler<CreateClientCommand, ClientDto>
 {
     public async Task<ClientDto> Handle(CreateClientCommand request, CancellationToken cancellationToken)
@@ -34,9 +34,7 @@ public class CreateClientCommandHandler(IApplicationDbContext context, IMapper m
             Status = request.Status
         };
 
-        context.Clients.Add(entity);
-        await context.SaveChangesAsync(cancellationToken);
-
+        await repository.AddAsync(entity, cancellationToken);
         return mapper.Map<ClientDto>(entity);
     }
 }

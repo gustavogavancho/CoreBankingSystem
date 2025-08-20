@@ -1,23 +1,19 @@
-using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CoreBankingSystem.Application.Clients.Commands;
 
 public record DeleteClientCommand(Guid Id) : IRequest<bool>;
 
-public class DeleteClientCommandHandler(IApplicationDbContext context)
+public class DeleteClientCommandHandler(IClientRepository repository)
     : IRequestHandler<DeleteClientCommand, bool>
 {
     public async Task<bool> Handle(DeleteClientCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.Clients.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+        var entity = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (entity is null) return false;
 
-        context.Clients.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
-
+        await repository.RemoveAsync(entity, cancellationToken);
         return true;
     }
 }

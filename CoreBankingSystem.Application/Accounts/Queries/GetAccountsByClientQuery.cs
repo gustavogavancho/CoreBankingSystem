@@ -1,20 +1,19 @@
 using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Accounts.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CoreBankingSystem.Application.Accounts.Queries;
 
 public record GetAccountsByClientQuery(Guid ClientId) : IRequest<List<AccountDto>>;
 
-public class GetAccountsByClientQueryHandler(IApplicationDbContext context, IMapper mapper)
+public class GetAccountsByClientQueryHandler(IAccountRepository repository, IMapper mapper)
     : IRequestHandler<GetAccountsByClientQuery, List<AccountDto>>
 {
     public async Task<List<AccountDto>> Handle(GetAccountsByClientQuery request, CancellationToken cancellationToken)
     {
-        // For now, accounts are not linked to clients with FK in domain. This query returns all accounts.
-        var accounts = await context.Accounts.AsNoTracking().ToListAsync(cancellationToken);
+        // No FK to client in current domain: returning all accounts for now
+        var accounts = await repository.GetByClientIdAsync(request.ClientId, cancellationToken);
         return mapper.Map<List<AccountDto>>(accounts);
     }
 }

@@ -1,5 +1,5 @@
 using AutoMapper;
-using CoreBankingSystem.Application.Abstractions;
+using CoreBankingSystem.Application.Abstractions.Repositories;
 using CoreBankingSystem.Application.Transactions.Models;
 using CoreBankingSystem.Domain.Entities;
 using MediatR;
@@ -14,7 +14,7 @@ public record CreateTransactionCommand(
     decimal Balance
 ) : IRequest<TransactionDto>;
 
-public class CreateTransactionCommandHandler(IApplicationDbContext context, IMapper mapper)
+public class CreateTransactionCommandHandler(ITransactionRepository repository, IMapper mapper)
     : IRequestHandler<CreateTransactionCommand, TransactionDto>
 {
     public async Task<TransactionDto> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
@@ -29,8 +29,7 @@ public class CreateTransactionCommandHandler(IApplicationDbContext context, IMap
             Balance = request.Balance
         };
 
-        context.Transactions.Add(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.AddAsync(entity, cancellationToken);
 
         return mapper.Map<TransactionDto>(entity);
     }
