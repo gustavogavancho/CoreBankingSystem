@@ -10,7 +10,8 @@ public record UpdateAccountCommand(
     string AccountNumber,
     string AccountType,
     decimal InitialBalance,
-    bool Status
+    bool Status,
+    Guid ClientId
 ) : IRequest<AccountDto?>;
 
 public class UpdateAccountCommandHandler(IAccountRepository repository, IMapper mapper)
@@ -24,6 +25,7 @@ public class UpdateAccountCommandHandler(IAccountRepository repository, IMapper 
         entity.AccountType = request.AccountType;
         entity.InitialBalance = request.InitialBalance;
         entity.Status = request.Status;
+        entity.ClientId = request.ClientId;
 
         await repository.UpdateAsync(entity, cancellationToken);
 

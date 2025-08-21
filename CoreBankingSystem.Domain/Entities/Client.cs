@@ -7,4 +7,7 @@ public class Client : Person
 
     public string Password { get; set; } = string.Empty;
     public bool Status { get; set; }
+
+    // Navigation: a client has many accounts
+    public ICollection<Account> Accounts { get; set; } = new List<Account>();
 }

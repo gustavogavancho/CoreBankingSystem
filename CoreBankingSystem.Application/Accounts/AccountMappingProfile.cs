@@ -8,6 +8,7 @@ public class AccountMappingProfile : Profile
 {
     public AccountMappingProfile()
     {
-        CreateMap<Account, AccountDto>();
+        CreateMap<Account, AccountDto>()
+            .ForMember(dest => dest.ClientId, opt => opt.MapFrom(src => src.ClientId));
     }
 }

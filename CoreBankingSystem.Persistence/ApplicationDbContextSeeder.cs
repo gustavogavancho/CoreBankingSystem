@@ -39,15 +39,24 @@ public static class ApplicationDbContextSeeder
             db.Clients.AddRange(client1, client2);
         }
 
-        // Seed Accounts (no FK to Client in current model)
+        await db.SaveChangesAsync(cancellationToken);
+
+        // Seed Accounts linked to existing clients
         if (!await db.Accounts.AnyAsync(cancellationToken))
         {
+            // pick two existing clients
+            // IMPORTANT: Accounts.ClientId FK points to Clients.Id (Person primary key), not Client.ClientId (business id)
+            var firstTwoClients = await db.Clients.Take(2).Select(c => c.Id).ToListAsync(cancellationToken);
+            var clientA = firstTwoClients.ElementAtOrDefault(0);
+            var clientB = firstTwoClients.ElementAtOrDefault(1);
+
             var acc1 = new Account
             {
                 AccountNumber = "ACC-1001",
                 AccountType = "Checking",
                 InitialBalance = 1000m,
-                Status = true
+                Status = true,
+                ClientId = clientA
             };
 
             var acc2 = new Account
@@ -55,7 +64,8 @@ public static class ApplicationDbContextSeeder
                 AccountNumber = "ACC-2002",
                 AccountType = "Savings",
                 InitialBalance = 2500m,
-                Status = true
+                Status = true,
+                ClientId = clientB
             };
 
             var acc3 = new Account
@@ -63,7 +73,8 @@ public static class ApplicationDbContextSeeder
                 AccountNumber = "ACC-3003",
                 AccountType = "Checking",
                 InitialBalance = 500m,
-                Status = true
+                Status = true,
+                ClientId = clientA
             };
 
             db.Accounts.AddRange(acc1, acc2, acc3);

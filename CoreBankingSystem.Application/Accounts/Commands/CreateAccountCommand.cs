@@ -10,7 +10,8 @@ public record CreateAccountCommand(
     string AccountNumber,
     string AccountType,
     decimal InitialBalance,
-    bool Status
+    bool Status,
+    Guid ClientId
 ) : IRequest<AccountDto>;
 
 public class CreateAccountCommandHandler(IAccountRepository repository, IMapper mapper)
@@ -23,7 +24,8 @@ public class CreateAccountCommandHandler(IAccountRepository repository, IMapper 
             AccountNumber = request.AccountNumber,
             AccountType = request.AccountType,
             InitialBalance = request.InitialBalance,
-            Status = request.Status
+            Status = request.Status,
+            ClientId = request.ClientId
         };
 
         await repository.AddAsync(entity, cancellationToken);

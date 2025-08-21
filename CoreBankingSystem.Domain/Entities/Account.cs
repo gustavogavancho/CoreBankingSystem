@@ -9,6 +9,10 @@ public class Account
     public decimal InitialBalance { get; set; }
     public bool Status { get; set; }
 
+    // FK to Client (required)
+    public Guid ClientId { get; set; }
+    public Client? Client { get; set; }
+
     // Navigation
     public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

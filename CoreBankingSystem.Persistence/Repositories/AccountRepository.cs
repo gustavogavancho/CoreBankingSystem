@@ -12,8 +12,12 @@ public class AccountRepository(ApplicationDbContext db) : IAccountRepository
     public async Task<Account?> GetByNumberAsync(string accountNumber, CancellationToken cancellationToken = default)
         => await db.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.AccountNumber == accountNumber, cancellationToken);
 
+    // Interpret the input Guid as the business Client.ClientId, not the Person.Id
     public async Task<List<Account>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken = default)
-        => await db.Accounts.AsNoTracking().ToListAsync(cancellationToken); // TODO: add FK and filter by client
+        => await db.Accounts
+            .AsNoTracking()
+            .Where(a => a.Client != null && a.Client.ClientId == clientId)
+            .ToListAsync(cancellationToken);
 
     public async Task AddAsync(Account account, CancellationToken cancellationToken = default)
     {

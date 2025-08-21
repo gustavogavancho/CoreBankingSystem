@@ -6,4 +6,5 @@ public class AccountDto
     public string AccountType { get; set; } = string.Empty;
     public decimal InitialBalance { get; set; }
     public bool Status { get; set; }
+    public Guid ClientId { get; set; }
 }
