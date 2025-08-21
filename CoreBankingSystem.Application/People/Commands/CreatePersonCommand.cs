@@ -30,7 +30,7 @@ public class CreatePersonCommandHandler(IApplicationDbContext context, IMapper m
         };
 
         context.People.Add(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
 
         return mapper.Map<PersonDto>(entity);
     }

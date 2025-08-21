@@ -29,7 +29,7 @@ public class CreateTransactionCommandHandler(ITransactionRepository repository, 
             Balance = request.Balance
         };
 
-        await repository.AddAsync(entity, cancellationToken);
+        await repository.AddAsync(entity);
 
         return mapper.Map<TransactionDto>(entity);
     }

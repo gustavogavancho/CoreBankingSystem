@@ -12,7 +12,7 @@ public class GetTransactionsQueryHandler(ITransactionRepository repository, IMap
 {
     public async Task<List<TransactionDto>> Handle(GetTransactionsQuery request, CancellationToken cancellationToken)
     {
-        var transactions = await repository.GetAllAsync(cancellationToken);
+        var transactions = await repository.GetAllAsync();
         return mapper.Map<List<TransactionDto>>(transactions);
     }
 }

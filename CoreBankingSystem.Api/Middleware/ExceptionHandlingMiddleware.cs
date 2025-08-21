@@ -26,6 +26,12 @@ public class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
+        catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+        {
+            // Client disconnected or request aborted; don't try to write a response
+            _logger.LogInformation("Request aborted by client. TraceId: {TraceId}", Activity.Current?.Id ?? context.TraceIdentifier);
+            // No response writing; simply return to stop the pipeline
+        }
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex, _logger);
@@ -36,6 +42,13 @@ public class ExceptionHandlingMiddleware
     {
         var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
         var statusCode = GetStatusCode(exception);
+
+        if (exception is OperationCanceledException && context.RequestAborted.IsCancellationRequested)
+        {
+            // If we reach here (e.g., non-standard cancellation), avoid writing a body.
+            logger.LogInformation("Operation canceled. TraceId: {TraceId}", traceId);
+            return;
+        }
 
         logger.LogError(exception, "Unhandled exception. TraceId: {TraceId}", traceId);
 
@@ -50,6 +63,13 @@ public class ExceptionHandlingMiddleware
         problem.Extensions["traceId"] = traceId;
         problem.Extensions["source"] = exception.Source;
 
+        // If the response has already started, we can't modify headers/body
+        if (context.Response.HasStarted)
+        {
+            logger.LogWarning("The response has already started, the error handling middleware will not write a response. TraceId: {TraceId}", traceId);
+            return;
+        }
+
         context.Response.ContentType = "application/problem+json";
         context.Response.StatusCode = statusCode;
 
@@ -58,7 +78,20 @@ public class ExceptionHandlingMiddleware
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
 
-        await context.Response.WriteAsync(json);
+        try
+        {
+            await context.Response.WriteAsync(json);
+        }
+        catch (OperationCanceledException)
+        {
+            // Swallow write cancellation (client disconnected during error write)
+            logger.LogInformation("Response write canceled. TraceId: {TraceId}", traceId);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore if response body is disposed due to connection abort
+            logger.LogInformation("Response object disposed before writing error. TraceId: {TraceId}", traceId);
+        }
     }
 
     private static int GetStatusCode(Exception exception) => exception switch
@@ -69,6 +102,7 @@ public class ExceptionHandlingMiddleware
         KeyNotFoundException => (int)HttpStatusCode.NotFound,
         DbUpdateConcurrencyException => (int)HttpStatusCode.Conflict,
         DbUpdateException => (int)HttpStatusCode.Conflict,
+        OperationCanceledException => StatusCodes.Status499ClientClosedRequest, // Non-standard but commonly used
         _ => (int)HttpStatusCode.InternalServerError
     };
 
@@ -79,6 +113,7 @@ public class ExceptionHandlingMiddleware
         403 => "Forbidden",
         404 => "Not Found",
         409 => "Conflict",
+        499 => "Client Closed Request",
         _ => "An unexpected error occurred"
     };
 }

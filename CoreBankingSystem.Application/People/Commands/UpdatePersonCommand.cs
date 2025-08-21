@@ -20,7 +20,7 @@ public class UpdatePersonCommandHandler(IApplicationDbContext context, IMapper m
 {
     public async Task<PersonDto?> Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.People.FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
+        var entity = await context.People.FirstOrDefaultAsync(p => p.Id == request.Id);
         if (entity is null) return null;
 
         entity.Name = request.Name;
@@ -29,7 +29,7 @@ public class UpdatePersonCommandHandler(IApplicationDbContext context, IMapper m
         entity.Identification = request.Identification;
         entity.PhoneNumber = request.PhoneNumber;
 
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
 
         return mapper.Map<PersonDto>(entity);
     }

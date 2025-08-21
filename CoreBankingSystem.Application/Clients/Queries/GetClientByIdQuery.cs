@@ -13,7 +13,7 @@ public class GetClientByIdQueryHandler(IClientRepository repository, IMapper map
 {
     public async Task<ClientDto> Handle(GetClientByIdQuery request, CancellationToken cancellationToken)
     {
-        var client = await repository.GetByIdAsync(request.Id, cancellationToken);
+        var client = await repository.GetByIdAsync(request.Id);
         if (client is null) throw new NotFoundException(nameof(ClientDto), request.Id);
         return mapper.Map<ClientDto>(client);
     }

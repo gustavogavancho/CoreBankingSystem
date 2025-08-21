@@ -12,7 +12,7 @@ public class GetTransactionsByAccountNumberQueryHandler(ITransactionRepository r
 {
     public async Task<List<TransactionDto>> Handle(GetTransactionsByAccountNumberQuery request, CancellationToken cancellationToken)
     {
-        var list = await repository.GetByAccountNumberAsync(request.AccountNumber, cancellationToken);
+        var list = await repository.GetByAccountNumberAsync(request.AccountNumber);
         return mapper.Map<List<TransactionDto>>(list);
     }
 }

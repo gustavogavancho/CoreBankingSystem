@@ -11,10 +11,10 @@ public class DeleteAccountCommandHandler(IAccountRepository repository)
 {
     public async Task<Unit> Handle(DeleteAccountCommand request, CancellationToken cancellationToken)
     {
-        var entity = await repository.GetByNumberAsync(request.AccountNumber, cancellationToken);
+        var entity = await repository.GetByNumberAsync(request.AccountNumber);
         if (entity is null) throw new NotFoundException("Account", request.AccountNumber);
 
-        await repository.RemoveAsync(entity, cancellationToken);
+        await repository.RemoveAsync(entity);
         return Unit.Value;
     }
 }

@@ -11,11 +11,11 @@ public class DeletePersonCommandHandler(IApplicationDbContext context)
 {
     public async Task<bool> Handle(DeletePersonCommand request, CancellationToken cancellationToken)
     {
-        var entity = await context.People.FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
+        var entity = await context.People.FirstOrDefaultAsync(p => p.Id == request.Id);
         if (entity is null) return false;
 
         context.People.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync();
 
         return true;
     }

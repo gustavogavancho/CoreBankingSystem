@@ -11,10 +11,10 @@ public class DeleteClientCommandHandler(IClientRepository repository)
 {
     public async Task<Unit> Handle(DeleteClientCommand request, CancellationToken cancellationToken)
     {
-        var entity = await repository.GetByIdAsync(request.Id, cancellationToken);
+        var entity = await repository.GetByIdAsync(request.Id);
         if (entity is null) throw new NotFoundException("Client", request.Id);
 
-        await repository.RemoveAsync(entity, cancellationToken);
+        await repository.RemoveAsync(entity);
         return Unit.Value;
     }
 }

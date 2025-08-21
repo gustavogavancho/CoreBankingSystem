@@ -11,7 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
 
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => base.SaveChangesAsync(cancellationToken);
+    public Task<int> SaveChangesAsync() => base.SaveChangesAsync(default);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

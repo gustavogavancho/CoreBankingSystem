@@ -11,10 +11,10 @@ public class DeleteTransactionCommandHandler(ITransactionRepository repository)
 {
     public async Task<Unit> Handle(DeleteTransactionCommand request, CancellationToken cancellationToken)
     {
-        var entity = await repository.GetByIdAsync(request.TransactionId, cancellationToken);
+        var entity = await repository.GetByIdAsync(request.TransactionId);
         if (entity is null) throw new NotFoundException("Transaction", request.TransactionId);
 
-        await repository.RemoveAsync(entity, cancellationToken);
+        await repository.RemoveAsync(entity);
         return Unit.Value;
     }
 }

@@ -12,7 +12,7 @@ public class GetAccountsQueryHandler(IAccountRepository repository, IMapper mapp
 {
     public async Task<List<AccountDto>> Handle(GetAccountsQuery request, CancellationToken cancellationToken)
     {
-        var accounts = await repository.GetAllAsync(cancellationToken);
+        var accounts = await repository.GetAllAsync();
         return mapper.Map<List<AccountDto>>(accounts);
     }
 }

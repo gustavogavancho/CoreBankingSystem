@@ -4,10 +4,10 @@ namespace CoreBankingSystem.Application.Abstractions.Repositories;
 
 public interface IClientRepository
 {
-    Task<List<Client>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Client?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<Client?> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken = default);
-    Task AddAsync(Client client, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Client client, CancellationToken cancellationToken = default);
-    Task RemoveAsync(Client client, CancellationToken cancellationToken = default);
+    Task<List<Client>> GetAllAsync();
+    Task<Client?> GetByIdAsync(Guid id);
+    Task<Client?> GetByClientIdAsync(Guid clientId);
+    Task AddAsync(Client client);
+    Task UpdateAsync(Client client);
+    Task RemoveAsync(Client client);
 }

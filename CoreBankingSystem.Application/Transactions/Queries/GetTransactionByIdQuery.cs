@@ -13,7 +13,7 @@ public class GetTransactionByIdQueryHandler(ITransactionRepository repository, I
 {
     public async Task<TransactionDto> Handle(GetTransactionByIdQuery request, CancellationToken cancellationToken)
     {
-        var transaction = await repository.GetByIdAsync(request.TransactionId, cancellationToken);
+        var transaction = await repository.GetByIdAsync(request.TransactionId);
         if (transaction is null) throw new NotFoundException(nameof(TransactionDto), request.TransactionId);
         return mapper.Map<TransactionDto>(transaction);
     }

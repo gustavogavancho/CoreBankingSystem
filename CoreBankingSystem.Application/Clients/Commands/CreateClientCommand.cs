@@ -34,7 +34,7 @@ public class CreateClientCommandHandler(IClientRepository repository, IMapper ma
             Status = request.Status
         };
 
-        await repository.AddAsync(entity, cancellationToken);
+        await repository.AddAsync(entity);
         return mapper.Map<ClientDto>(entity);
     }
 }

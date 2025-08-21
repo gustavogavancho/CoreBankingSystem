@@ -20,7 +20,7 @@ public class UpdateClientCommandHandler(IClientRepository repository, IMapper ma
 {
     public async Task<ClientDto?> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
     {
-        var entity = await repository.GetByIdAsync(request.Id, cancellationToken);
+        var entity = await repository.GetByIdAsync(request.Id);
         if (entity is null) return null;
 
         entity.Name = request.Name;
@@ -30,7 +30,7 @@ public class UpdateClientCommandHandler(IClientRepository repository, IMapper ma
         entity.PhoneNumber = request.PhoneNumber;
         entity.Status = request.Status;
 
-        await repository.UpdateAsync(entity, cancellationToken);
+        await repository.UpdateAsync(entity);
 
         return mapper.Map<ClientDto>(entity);
     }

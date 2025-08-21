@@ -20,7 +20,7 @@ public class UpdateTransactionCommandHandler(ITransactionRepository repository, 
 {
     public async Task<TransactionDto?> Handle(UpdateTransactionCommand request, CancellationToken cancellationToken)
     {
-        var entity = await repository.GetByIdAsync(request.TransactionId, cancellationToken);
+        var entity = await repository.GetByIdAsync(request.TransactionId);
         if (entity is null) throw new NotFoundException("Transaction", request.TransactionId);
 
         entity.AccountNumber = request.AccountNumber;
@@ -29,7 +29,7 @@ public class UpdateTransactionCommandHandler(ITransactionRepository repository, 
         entity.Amount = request.Amount;
         entity.Balance = request.Balance;
 
-        await repository.UpdateAsync(entity, cancellationToken);
+        await repository.UpdateAsync(entity);
 
         return mapper.Map<TransactionDto>(entity);
     }

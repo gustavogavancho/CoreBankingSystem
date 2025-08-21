@@ -12,7 +12,7 @@ public class GetClientByClientIdQueryHandler(IClientRepository repository, IMapp
 {
     public async Task<ClientDto?> Handle(GetClientByClientIdQuery request, CancellationToken cancellationToken)
     {
-        var client = await repository.GetByClientIdAsync(request.ClientId, cancellationToken);
+        var client = await repository.GetByClientIdAsync(request.ClientId);
         return client is null ? null : mapper.Map<ClientDto>(client);
     }
 }

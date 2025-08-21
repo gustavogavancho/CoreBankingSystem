@@ -11,47 +11,47 @@ namespace CoreBankingSystem.Api.Controllers;
 public class TransactionsController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<TransactionDto>>> Get()
+    public async Task<ActionResult<List<TransactionDto>>> Get(CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetTransactionsQuery());
+        var result = await mediator.Send(new GetTransactionsQuery(), cancellationToken);
         return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<TransactionDto>> GetById(Guid id)
+    public async Task<ActionResult<TransactionDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetTransactionByIdQuery(id));
+        var result = await mediator.Send(new GetTransactionByIdQuery(id), cancellationToken);
         return Ok(result);
     }
 
     // Keep a top-level filter as helper if needed, but nested route under accounts is the canonical one.
     [HttpGet]
     [Route("/api/accounts/{accountNumber}/transactions")] // explicit route to reuse the same controller action if desired
-    public async Task<ActionResult<List<TransactionDto>>> GetByAccount(string accountNumber)
+    public async Task<ActionResult<List<TransactionDto>>> GetByAccount(string accountNumber, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetTransactionsByAccountNumberQuery(accountNumber));
+        var result = await mediator.Send(new GetTransactionsByAccountNumberQuery(accountNumber), cancellationToken);
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<TransactionDto>> Create(CreateTransactionCommand command)
+    public async Task<ActionResult<TransactionDto>> Create(CreateTransactionCommand command, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.TransactionId }, result);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<TransactionDto>> Update(Guid id, UpdateTransactionCommand command)
+    public async Task<ActionResult<TransactionDto>> Update(Guid id, UpdateTransactionCommand command, CancellationToken cancellationToken)
     {
         if (id != command.TransactionId) return BadRequest();
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
         return Ok(result);
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> Delete(Guid id)
+    public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await mediator.Send(new DeleteTransactionCommand(id));
+        await mediator.Send(new DeleteTransactionCommand(id), cancellationToken);
         return NoContent();
     }
 }

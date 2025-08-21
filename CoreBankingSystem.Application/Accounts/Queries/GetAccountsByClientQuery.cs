@@ -12,7 +12,7 @@ public class GetAccountsByClientQueryHandler(IAccountRepository repository, IMap
 {
     public async Task<List<AccountDto>> Handle(GetAccountsByClientQuery request, CancellationToken cancellationToken)
     {
-        var accounts = await repository.GetByClientIdAsync(request.ClientId, cancellationToken);
+        var accounts = await repository.GetByClientIdAsync(request.ClientId);
         return mapper.Map<List<AccountDto>>(accounts);
     }
 }

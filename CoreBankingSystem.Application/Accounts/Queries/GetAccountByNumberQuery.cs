@@ -13,7 +13,7 @@ public class GetAccountByNumberQueryHandler(IAccountRepository repository, IMapp
 {
     public async Task<AccountDto> Handle(GetAccountByNumberQuery request, CancellationToken cancellationToken)
     {
-        var account = await repository.GetByNumberAsync(request.AccountNumber, cancellationToken);
+        var account = await repository.GetByNumberAsync(request.AccountNumber);
         if (account is null) throw new NotFoundException(nameof(AccountDto), request.AccountNumber);
         return mapper.Map<AccountDto>(account);
     }
