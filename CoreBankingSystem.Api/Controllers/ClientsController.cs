@@ -41,9 +41,13 @@ public class ClientsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<ClientDto>> Update(Guid id, UpdateClientCommand command)
+    public async Task<ActionResult<ClientDto>> Update(Guid id, [FromBody] UpdateClientCommand command)
     {
-        if (id != command.Id) return BadRequest();
+        // Enforce id from route so clients don't need to send it in the body
+        if (id != command.Id)
+        {
+            command = command with { Id = id };
+        }
         var result = await mediator.Send(command);
         return Ok(result);
     }
