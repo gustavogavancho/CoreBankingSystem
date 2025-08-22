@@ -12,8 +12,6 @@ import { AccountFormComponent } from './accounts/account-form.component';
 import { TransactionsListComponent } from './transactions/transactions-list.component';
 import { TransactionFormComponent } from './transactions/transaction-form.component';
 import { ReportsComponent } from './reports/reports.component';
-import { SearchComponent } from './search/search.component';
-import { SearchBarComponent } from './shared/search-bar.component';
 
 @NgModule({
   declarations: [
@@ -24,9 +22,7 @@ import { SearchBarComponent } from './shared/search-bar.component';
     AccountFormComponent,
     TransactionsListComponent,
     TransactionFormComponent,
-    ReportsComponent,
-    SearchComponent,
-    SearchBarComponent
+    ReportsComponent
   ],
   imports: [
     BrowserModule,

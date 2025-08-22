@@ -7,7 +7,6 @@ import { AccountFormComponent } from './accounts/account-form.component';
 import { TransactionsListComponent } from './transactions/transactions-list.component';
 import { TransactionFormComponent } from './transactions/transaction-form.component';
 import { ReportsComponent } from './reports/reports.component';
-import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'clients', pathMatch: 'full' },
@@ -24,7 +23,6 @@ const routes: Routes = [
   { path: 'transactions/:id/edit', component: TransactionFormComponent },
 
   { path: 'reports', component: ReportsComponent },
-  { path: 'search', component: SearchComponent },
 ];
 
 @NgModule({
