@@ -16,6 +16,23 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS for Angular dev server
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithOrigins(
+                "http://localhost:65153",
+                "http://127.0.0.1:65153",
+                "http://localhost:4200",
+                "http://127.0.0.1:4200"
+            );
+    });
+});
+
 // Clean Architecture DI
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
@@ -53,6 +70,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // Enable CORS only in development
+    app.UseCors("DevCors");
 }
 
 app.UseHttpsRedirection();
