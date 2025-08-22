@@ -42,6 +42,7 @@ public static class ApplicationDbContextSeeder
         await db.SaveChangesAsync(cancellationToken);
 
         // Seed Accounts linked to existing clients
+        var createdAccounts = false;
         if (!await db.Accounts.AnyAsync(cancellationToken))
         {
             // pick two existing clients
@@ -78,18 +79,70 @@ public static class ApplicationDbContextSeeder
             };
 
             db.Accounts.AddRange(acc1, acc2, acc3);
+            createdAccounts = true;
+        }
+
+        // Ensure accounts are persisted before we compute transaction balances
+        if (createdAccounts)
+        {
+            await db.SaveChangesAsync(cancellationToken);
         }
 
         // Seed Transactions
         if (!await db.Transactions.AnyAsync(cancellationToken))
         {
-            var txs = new List<Transaction>
+            // Load accounts to get InitialBalance
+            var accounts = await db.Accounts.AsNoTracking().ToListAsync(cancellationToken);
+            var initialByAccount = accounts.ToDictionary(a => a.AccountNumber, a => a.InitialBalance);
+
+            // Define seed transaction inputs without precomputed balance
+            var inputs = new List<(string AccountNumber, DateTime Date, string Type, decimal Amount)>
             {
-                new() { TransactionId = Guid.NewGuid(), AccountNumber = "ACC-1001", Date = DateTime.UtcNow.AddDays(-5), TransactionType = "Deposit", Amount = 500m, Balance = 1500m },
-                new() { TransactionId = Guid.NewGuid(), AccountNumber = "ACC-1001", Date = DateTime.UtcNow.AddDays(-3), TransactionType = "Withdrawal", Amount = -200m, Balance = 1300m },
-                new() { TransactionId = Guid.NewGuid(), AccountNumber = "ACC-2002", Date = DateTime.UtcNow.AddDays(-4), TransactionType = "Deposit", Amount = 750m, Balance = 3250m },
-                new() { TransactionId = Guid.NewGuid(), AccountNumber = "ACC-3003", Date = DateTime.UtcNow.AddDays(-2), TransactionType = "Deposit", Amount = 300m, Balance = 800m }
+                ("ACC-1001", DateTime.UtcNow.AddDays(-5), "Deposit", 500m),
+                ("ACC-1001", DateTime.UtcNow.AddDays(-3), "Withdrawal", -200m),
+                ("ACC-2002", DateTime.UtcNow.AddDays(-4), "Deposit", 750m),
+                ("ACC-3003", DateTime.UtcNow.AddDays(-2), "Deposit", 300m)
             };
+
+            // Compute running balances per account
+            var grouped = inputs
+                .GroupBy(i => i.AccountNumber)
+                .ToDictionary(g => g.Key, g => g.OrderBy(i => i.Date).ToList());
+
+            var txs = new List<Transaction>();
+            foreach (var kvp in grouped)
+            {
+                var accountNumber = kvp.Key;
+                if (!initialByAccount.TryGetValue(accountNumber, out var running))
+                {
+                    // Skip if account not found (should not happen in seeded data)
+                    continue;
+                }
+
+                foreach (var i in kvp.Value)
+                {
+                    var newBalance = running + i.Amount;
+
+                    // Avoid seeding a zero-balance transaction per business rule
+                    if (newBalance == 0m)
+                    {
+                        // Nudge by 0.01 to keep data valid for demo purposes
+                        newBalance += 0.01m;
+                    }
+
+                    txs.Add(new Transaction
+                    {
+                        TransactionId = Guid.NewGuid(),
+                        AccountNumber = accountNumber,
+                        Date = i.Date,
+                        TransactionType = i.Type,
+                        Amount = i.Amount,
+                        Balance = newBalance
+                    });
+
+                    running = newBalance;
+                }
+            }
 
             db.Transactions.AddRange(txs);
         }
