@@ -21,6 +21,9 @@ public class ClientRepository(ApplicationDbContext context) : IClientRepository
     public async Task<Client?> GetByClientIdAsync(Guid clientId)
         => await context.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.ClientId == clientId);
 
+    public async Task<Client?> GetByIdentificationAsync(string identification)
+        => await context.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.Identification == identification);
+
     public async Task RemoveAsync(Client client)
     {
         context.Clients.Remove(client);

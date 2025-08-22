@@ -7,7 +7,7 @@ import { ApiService } from '../shared/api.service';
     <section>
       <h2>Reportes</h2>
       <form (ngSubmit)="getReportJson()" #f="ngForm">
-        <div class="row"><label>Cliente (ClientId)</label><input name="clientId" [(ngModel)]="clientId" required /></div>
+        <div class="row"><label>Identificación</label><input name="identification" [(ngModel)]="identification" required /></div>
         <div class="row"><label>Rango Fechas</label><input name="rangoFechas" [(ngModel)]="rangoFechas" placeholder="YYYY-MM-DD,YYYY-MM-DD" required /></div>
         <div class="actions">
           <button type="submit">Obtener JSON</button>
@@ -37,17 +37,17 @@ import { ApiService } from '../shared/api.service';
   `]
 })
 export class ReportsComponent{
-  clientId=''; rangoFechas=''; json:any=null; pdfBase64=''; error='';
+  identification=''; rangoFechas=''; json:any=null; pdfBase64=''; error='';
   constructor(private api:ApiService){}
   getReportJson(){
     this.error=''; this.pdfBase64=''; this.json=null;
-    if(!this.clientId || !this.rangoFechas){ this.error='Complete los campos'; return; }
-    this.api.getReportJson({ clientId:this.clientId, rangoFechas:this.rangoFechas }).subscribe({ next:d=> this.json=d, error:e=> this.error=this.friendlyError(e) });
+    if(!this.identification || !this.rangoFechas){ this.error='Complete los campos'; return; }
+    this.api.getReportJson({ identification:this.identification, rangoFechas:this.rangoFechas }).subscribe({ next:d=> this.json=d, error:e=> this.error=this.friendlyError(e) });
   }
   getReportPdf(){
     this.error=''; this.pdfBase64='';
-    if(!this.clientId || !this.rangoFechas){ this.error='Complete los campos'; return; }
-    this.api.getReportPdfBase64({ clientId:this.clientId, rangoFechas:this.rangoFechas }).subscribe({ next:d=> this.pdfBase64=d.base64, error:e=> this.error=this.friendlyError(e) });
+    if(!this.identification || !this.rangoFechas){ this.error='Complete los campos'; return; }
+    this.api.getReportPdfBase64({ identification:this.identification, rangoFechas:this.rangoFechas }).subscribe({ next:d=> this.pdfBase64=d.base64, error:e=> this.error=this.friendlyError(e) });
   }
   asDataUrl(b64:string){ return `data:application/pdf;base64,${b64}`; }
   private friendlyError(e:any){ return e?.error?.message || 'Ocurrió un error'; }

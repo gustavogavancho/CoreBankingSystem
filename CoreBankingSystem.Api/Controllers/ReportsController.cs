@@ -10,30 +10,32 @@ namespace CoreBankingSystem.Api.Controllers;
 public class ReportsController(IMediator mediator, IReportTextFormatter formatter, IPdfGenerator pdfGenerator) : ControllerBase
 {
     // JSON endpoint - keep only /report/json
-    [HttpGet("/report/json")] // /report/json?Cliente=...&rangoFechas=...
+    [HttpGet("/report/json")] // /report/json?identification=...&rangoFechas=...
     public async Task<IActionResult> GetClientStatementJson(
         [FromQuery] Guid? clientId,
-        [FromQuery(Name = "Cliente")] Guid? cliente,
+        [FromQuery(Name = "identification")] string? identification,
+        [FromQuery(Name = "Cliente")] string? cliente,
         [FromQuery] DateTime? start,
         [FromQuery] DateTime? end,
         [FromQuery(Name = "rangoFechas")] string? rangoFechas,
         CancellationToken cancellationToken = default)
     {
-        var dto = await mediator.Send(new GetClientStatementReportFromParamsQuery(clientId, cliente, start, end, rangoFechas), cancellationToken);
+        var dto = await mediator.Send(new GetClientStatementReportFromParamsQuery(clientId, identification, cliente, start, end, rangoFechas), cancellationToken);
         return Ok(dto);
     }
 
     // PDF endpoint (returns base64) - keep only /report/pdf
-    [HttpGet("/report/pdf")] // /report/pdf?Cliente=...&rangoFechas=...
+    [HttpGet("/report/pdf")] // /report/pdf?identification=...&rangoFechas=...
     public async Task<IActionResult> GetClientStatementPdf(
         [FromQuery] Guid? clientId,
-        [FromQuery(Name = "Cliente")] Guid? cliente,
+        [FromQuery(Name = "identification")] string? identification,
+        [FromQuery(Name = "Cliente")] string? cliente,
         [FromQuery] DateTime? start,
         [FromQuery] DateTime? end,
         [FromQuery(Name = "rangoFechas")] string? rangoFechas,
         CancellationToken cancellationToken = default)
     {
-        var dto = await mediator.Send(new GetClientStatementReportFromParamsQuery(clientId, cliente, start, end, rangoFechas), cancellationToken);
+        var dto = await mediator.Send(new GetClientStatementReportFromParamsQuery(clientId, identification, cliente, start, end, rangoFechas), cancellationToken);
         var content = formatter.BuildClientStatementText(dto);
         var pdfBytes = pdfGenerator.GenerateFromText(content);
         var base64 = Convert.ToBase64String(pdfBytes);

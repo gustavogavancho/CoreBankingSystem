@@ -31,11 +31,11 @@ export class ApiService {
   createTransaction(body: any): Observable<any> { return this.http.post<any>(`${this.baseApi}/transactions`, body); }
 
   // Reports
-  getReportJson(params: { clientId?: string; Cliente?: string; start?: string; end?: string; rangoFechas?: string }): Observable<any> {
+  getReportJson(params: { identification?: string; Cliente?: string; clientId?: string; start?: string; end?: string; rangoFechas?: string }): Observable<any> {
     const query = new URLSearchParams(params as any).toString();
     return this.http.get<any>(`${this.reportRoot}/report/json?${query}`);
     }
-  getReportPdfBase64(params: { clientId?: string; Cliente?: string; start?: string; end?: string; rangoFechas?: string }): Observable<{ base64: string }> {
+  getReportPdfBase64(params: { identification?: string; Cliente?: string; clientId?: string; start?: string; end?: string; rangoFechas?: string }): Observable<{ base64: string }> {
     const query = new URLSearchParams(params as any).toString();
     return this.http.get<{ base64: string }>(`${this.reportRoot}/report/pdf?${query}`);
   }

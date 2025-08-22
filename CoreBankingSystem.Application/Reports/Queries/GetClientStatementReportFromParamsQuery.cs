@@ -1,12 +1,14 @@
 using CoreBankingSystem.Application.Reports.Models;
 using CoreBankingSystem.Application.Common.Exceptions;
 using MediatR;
+using CoreBankingSystem.Application.Clients.Queries;
 
 namespace CoreBankingSystem.Application.Reports.Queries;
 
 public record GetClientStatementReportFromParamsQuery(
     Guid? ClientId,
-    Guid? Cliente,
+    string? Identification,
+    string? Cliente, // alias to support ?Cliente=ID-1001
     DateTime? Start,
     DateTime? End,
     string? RangoFechas
@@ -17,9 +19,27 @@ public class GetClientStatementReportFromParamsQueryHandler(IMediator mediator)
 {
     public async Task<ClientStatementReportDto> Handle(GetClientStatementReportFromParamsQuery request, CancellationToken cancellationToken)
     {
-        var effectiveClientId = request.ClientId ?? request.Cliente;
-        if (effectiveClientId is null || effectiveClientId == Guid.Empty)
-            throw new BadRequestException("Debe especificar el cliente (clientId o Cliente).");
+        // Prefer identification (either in Identification or Cliente alias), otherwise allow ClientId for backward compatibility
+        Guid? effectiveClientId = null;
+
+        var identification = !string.IsNullOrWhiteSpace(request.Identification)
+            ? request.Identification
+            : (!string.IsNullOrWhiteSpace(request.Cliente) ? request.Cliente : null);
+
+        if (!string.IsNullOrWhiteSpace(identification))
+        {
+            var client = await mediator.Send(new GetClientByIdentificationQuery(identification!), cancellationToken);
+            if (client is null)
+                throw new BadRequestException($"No se encontró cliente con identificación '{identification}'.");
+            effectiveClientId = client.ClientId;
+        }
+        else if (request.ClientId is not null && request.ClientId != Guid.Empty)
+        {
+            effectiveClientId = request.ClientId;
+        }
+
+        if (effectiveClientId is null)
+            throw new BadRequestException("Debe especificar la identificación del cliente (identification o Cliente) o un clientId.");
 
         // Resolve date range
         DateTime? start = request.Start;

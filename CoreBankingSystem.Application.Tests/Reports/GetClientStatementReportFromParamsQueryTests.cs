@@ -23,7 +23,14 @@ public class GetClientStatementReportFromParamsQueryTests
         var handler = new GetClientStatementReportFromParamsQueryHandler(mediator.Object);
 
         // Act
-        var result = await handler.Handle(new GetClientStatementReportFromParamsQuery(null, clientId, null, null, "2025-01-01,2025-01-31"), CancellationToken.None);
+        var result = await handler.Handle(new GetClientStatementReportFromParamsQuery(
+            ClientId: clientId,
+            Identification: null,
+            Cliente: null,
+            Start: null,
+            End: null,
+            RangoFechas: "2025-01-01,2025-01-31"
+        ), CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -38,7 +45,14 @@ public class GetClientStatementReportFromParamsQueryTests
 
         await Assert.ThrowsAsync<BadRequestException>(async () =>
         {
-            await handler.Handle(new GetClientStatementReportFromParamsQuery(Guid.NewGuid(), null, new DateTime(2025, 1, 31), new DateTime(2025, 1, 1), null), CancellationToken.None);
+            await handler.Handle(new GetClientStatementReportFromParamsQuery(
+                ClientId: Guid.NewGuid(),
+                Identification: null,
+                Cliente: null,
+                Start: new DateTime(2025, 1, 31),
+                End: new DateTime(2025, 1, 1),
+                RangoFechas: null
+            ), CancellationToken.None);
         });
     }
 }
