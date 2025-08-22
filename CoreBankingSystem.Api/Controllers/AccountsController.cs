@@ -1,6 +1,8 @@
 using CoreBankingSystem.Application.Accounts.Models;
 using CoreBankingSystem.Application.Accounts.Queries;
 using CoreBankingSystem.Application.Accounts.Commands;
+using CoreBankingSystem.Application.Transactions.Models;
+using CoreBankingSystem.Application.Transactions.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +23,14 @@ public class AccountsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<AccountDto>> GetByNumber(string accountNumber, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetAccountByNumberQuery(accountNumber), cancellationToken);
+        return Ok(result);
+    }
+
+    // List transactions by account number
+    [HttpGet("{accountNumber}/transactions")]
+    public async Task<ActionResult<List<TransactionDto>>> GetTransactionsByAccount(string accountNumber, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetTransactionsByAccountNumberQuery(accountNumber), cancellationToken);
         return Ok(result);
     }
 

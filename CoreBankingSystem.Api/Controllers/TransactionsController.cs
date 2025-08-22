@@ -24,15 +24,6 @@ public class TransactionsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    // Allow listing transactions by account number via a top-level explicit route
-    [HttpGet]
-    [Route("/api/accounts/{accountNumber}/transactions")]
-    public async Task<ActionResult<List<TransactionDto>>> GetByAccount(string accountNumber, CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new GetTransactionsByAccountNumberQuery(accountNumber), cancellationToken);
-        return Ok(result);
-    }
-
     [HttpPost]
     public async Task<ActionResult<TransactionDto>> Create(CreateTransactionCommand command, CancellationToken cancellationToken)
     {
@@ -43,7 +34,11 @@ public class TransactionsController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<TransactionDto>> Update(Guid id, UpdateTransactionCommand command, CancellationToken cancellationToken)
     {
-        if (id != command.TransactionId) return BadRequest();
+        // Enforce id from route so clients don't need to send it in the body
+        if (id != command.TransactionId)
+        {
+            command = command with { TransactionId = id };
+        }
         var result = await mediator.Send(command, cancellationToken);
         return Ok(result);
     }
