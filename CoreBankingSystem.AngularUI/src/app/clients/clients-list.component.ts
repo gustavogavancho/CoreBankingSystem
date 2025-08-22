@@ -7,7 +7,7 @@ import { ApiService } from '../shared/api.service';
   template: `
     <section>
       <h2>Clientes</h2>
-      <app-search-bar (search)="onSearch($event)"></app-search-bar>
+      <div class="search"><input placeholder="Buscar..." (input)="onSearch($any($event.target).value)" /></div>
       <div class="actions"><button (click)="create()">Nuevo</button></div>
       <table class="grid">
         <thead>

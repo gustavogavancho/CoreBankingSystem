@@ -7,7 +7,7 @@ import { ApiService } from '../shared/api.service';
   template: `
     <section>
       <h2>Movimientos</h2>
-      <app-search-bar (search)="onSearch($event)"></app-search-bar>
+      <div class="search"><input placeholder="Buscar..." (input)="onSearch($any($event.target).value)" /></div>
       <div class="actions"><button (click)="create()">Nuevo</button></div>
       <table class="grid">
         <thead>
@@ -17,7 +17,7 @@ import { ApiService } from '../shared/api.service';
         </thead>
         <tbody>
           <tr *ngFor="let t of filtered">
-            <td>{{t.date | date: 'yyyy-MM-dd'}}</td>
+            <td>{{t.date | date: 'yyyy-MM-dd'}};</td>
             <td>{{t.transactionType}}</td>
             <td>{{t.amount}}</td>
             <td>{{t.balance}}</td>
