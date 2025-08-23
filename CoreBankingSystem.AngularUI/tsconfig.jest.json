@@ -1,0 +1,11 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* Jest-specific tsconfig that enables Jest globals/types without affecting Karma. */
+{
+  "extends": "./tsconfig.spec.json",
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "node"
+    ]
+  }
+}

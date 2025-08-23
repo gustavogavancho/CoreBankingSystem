@@ -26,10 +26,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('CoreBankingSystem.AngularUI');
   });
 
-  it('should render title', () => {
+  it('should render topbar brand', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, CoreBankingSystem.AngularUI');
+    expect(compiled.querySelector('.brand')?.textContent).toContain('CoreBanking');
   });
 });
