@@ -1,0 +1,8 @@
+# Ignore dependencies and build output
+node_modules
+coverage
+
+# Ignore Angular editor/cli caches
+.angular
+
+# Ignore everything else by default? No, we keep default include.

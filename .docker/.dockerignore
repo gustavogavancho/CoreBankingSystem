@@ -1,0 +1,24 @@
+# ignore everything by default
+**/*
+
+# allow only backend and shared .NET sources needed for API build
+!CoreBankingSystem.sln
+!CoreBankingSystem.Api/**
+!CoreBankingSystem.Application/**
+!CoreBankingSystem.Persistence/**
+!CoreBankingSystem.Domain/**
+
+# keep compose and docker files
+!.docker/**
+!docker-compose.yml
+!deploy.bat
+
+# exclude bin/obj within allowed folders
+CoreBankingSystem.Api/bin/
+CoreBankingSystem.Api/obj/
+CoreBankingSystem.Application/bin/
+CoreBankingSystem.Application/obj/
+CoreBankingSystem.Persistence/bin/
+CoreBankingSystem.Persistence/obj/
+CoreBankingSystem.Domain/bin/
+CoreBankingSystem.Domain/obj/

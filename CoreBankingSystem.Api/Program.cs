@@ -65,19 +65,25 @@ using (var scope = app.Services.CreateScope())
 // Global exception handling
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+// Serve Swagger in all environments to aid diagnostics
+app.UseSwagger();
+app.UseSwaggerUI();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
     // Enable CORS only in development
     app.UseCors("DevCors");
+
+    // Only force HTTPS locally (Docker compose uses HTTP between containers)
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
+
+// Minimal endpoints for quick checks
+app.MapGet("/", () => Results.Ok(new { status = "ok", service = "CoreBankingSystem.Api" }));
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.MapControllers();
 
